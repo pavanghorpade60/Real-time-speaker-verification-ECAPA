@@ -1,135 +1,224 @@
-# Real-Time Speaker Identification using ECAPA-TDNN
-git clone <repo_link>
-cd real-time-speaker-identification
-pip install -r requirements.txt
-## Overview
+# 🎙️ Real-Time Speaker Verification using ECAPA-TDNN
 
-This project implements a real-time speaker identification system using the ECAPA-TDNN deep learning architecture in PyTorch.
+A real-time biometric speaker verification system built using a pretrained **ECAPA-TDNN** model and cosine similarity scoring.
 
-The system captures live microphone audio, extracts discriminative speaker embeddings, and performs instant speaker classification with low latency.
-
-An optional gender classification head is also integrated as an auxiliary task.
-
-The goal of this project is to design and deploy a complete end-to-end speech AI pipeline — from audio capture to real-time inference.
+The system performs structured speaker enrollment, extracts 192-dimensional speaker embeddings, and verifies identity using threshold-based comparison. Multi-trial averaging is implemented to improve robustness and reduce embedding variance.
 
 ---
 
-## Key Features
+## 🚀 Project Overview
 
-- Real-time microphone streaming  
-- ECAPA-TDNN based speaker embedding extraction  
-- Multi-speaker classification  
-- Optional gender classification module  
-- Modular and extensible architecture  
-- Low-latency inference pipeline  
+This project implements a complete speaker verification pipeline:
+
+- 🎤 Structured voice sample collection  
+- 🔄 Audio preprocessing & standardization  
+- 🧠 Speaker embedding extraction (ECAPA-TDNN)  
+- 💾 Enrollment embedding storage  
+- 📊 Cosine similarity scoring  
+- 🔐 Threshold-based identity verification  
+- 📈 Multi-trial stabilization for improved accuracy  
+
+The system is modular, scalable, and designed following production-oriented ML engineering practices.
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
-```mermaid
-flowchart LR
-    A[Live Microphone Input] --> B[Audio Preprocessing]
-    B --> C[Mel Spectrogram Extraction]
-    C --> D[ECAPA-TDNN Backbone]
-    D --> E[Speaker Embedding Vector]
-    E --> F[Speaker Classification Head]
-    E --> G[Gender Classification Head (Optional)]
-    F --> H[Predicted Speaker]
-    G --> I[Predicted Gender]
-    How the Pipeline Works
+### 🔁 End-to-End Pipeline
 
-Live audio is captured using the system microphone.
+```
+Raw Audio / Microphone
+        ↓
+Audio Standardization (16kHz, Mono)
+        ↓
+ECAPA-TDNN Embedding Extraction
+        ↓
+L2 Normalization
+        ↓
+Cosine Similarity Comparison
+        ↓
+Threshold Decision
+        ↓
+Speaker: Pavan / Unknown
+```
 
-Audio is normalized and preprocessed.
+---
 
-Log-Mel Spectrogram features are extracted.
+## 🧠 Model Details
 
-The ECAPA-TDNN backbone generates a fixed-length speaker embedding.
+- Architecture: ECAPA-TDNN  
+- Pretrained on: VoxCeleb dataset  
+- Embedding Dimension: 192  
+- Similarity Metric: Cosine Similarity  
+- Decision Strategy: Threshold-based classification  
+- Optional Stabilization: Multi-trial embedding averaging  
 
-The embedding is passed to:
+---
 
-A speaker classification layer
+## 📂 Project Structure
 
-(Optional) a gender classification layer
-
-Predictions are displayed in real time.
-
-Technical Stack
-
-Python
-
-PyTorch
-
-Torchaudio
-
-NumPy
-
-SoundDevice
-
-Hugging Face (pretrained ECAPA components)
-
-Project Structure
-real-time-speaker-identification/
+```
+Real-time-speaker-verification-ECAPA/
 │
-├── model.py                # ECAPA-TDNN architecture + classifier heads
-├── build_voiceprint.py     # Voiceprint generation
-├── record_samples.py       # Audio data collection
-├── test.py                 # Real-time inference
-├── utils.py                # Helper utilities
-├── requirements.txt
-├── README.md
-└── data/                   # Stored speaker samples
-Installation
-git clone https://github.com/your-username/real-time-speaker-identification.git
-cd real-time-speaker-identification
+├── model.py                # Custom ECAPA-style embedding model
+├── utils.py                # Preprocessing & similarity utilities
+├── build_voiceprint.py     # Enrollment pipeline
+├── record_samples.py       # Structured audio recording
+├── convert_audio.py        # Audio format standardization
+├── test.py                 # Single-sample real-time verification
+├── test2.py                # Multi-trial stabilized verification
+├── requirements.txt        # Dependencies
+├── .gitignore              # Ignore unnecessary files
+└── README.md               # Project documentation
+```
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/pavanghorpade60/Real-time-speaker-verification-ECAPA.git
+cd Real-time-speaker-verification-ECAPA
+```
+
+### 2️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
-Running Real-Time Inference
+```
+
+---
+
+## 🎤 Enrollment Process
+
+### Step 1 – Record Samples
+
+```bash
+python record_samples.py
+```
+
+This records multiple 16kHz mono samples for enrollment.
+
+---
+
+### Step 2 – Convert Audio (If Required)
+
+```bash
+python convert_audio.py
+```
+
+Standardizes audio to 16kHz mono WAV format.
+
+---
+
+### Step 3 – Build Enrollment Embeddings
+
+```bash
+python build_voiceprint.py
+```
+
+This:
+- Extracts embeddings using ECAPA-TDNN
+- Normalizes embeddings
+- Saves them as `pavan_embeddings.pt`
+
+---
+
+## 🔐 Real-Time Verification
+
+### Single Sample Mode
+
+```bash
 python test.py
+```
 
-Speak into the microphone to receive live speaker predictions.
+Example Output:
 
-Performance & Observations
+```
+🔎 Audio Energy: 0.0832
+📊 Average Similarity: 0.7814
+📊 Max Similarity:     0.8429
+🗣️ Speaker: Pavan
+```
 
-Stable real-time inference
+---
 
-Effective speaker discrimination using learned embeddings
+### Multi-Trial Stabilized Mode
 
-Modular design allows easy scaling to multiple speakers
+```bash
+python test2.py
+```
 
-Embedding-based architecture supports future unknown speaker detection
+Example Output:
 
-Future Enhancements
+```
+📊 Average Similarity: 0.8035
+📊 Max Similarity:     0.8712
+🗣️ Speaker: Pavan
+```
 
-Unknown speaker rejection using cosine similarity threshold
+Multi-trial averaging reduces embedding variance and improves robustness.
 
-Larger multi-speaker dataset
+---
 
-Confidence score visualization
+## 📊 Similarity Interpretation
 
-Web deployment (Streamlit / FastAPI)
+Cosine similarity range:
 
-REST API integration
+- Same Speaker → ~0.65 to 0.90  
+- Different Speaker → ~0.20 to 0.50  
 
-Model quantization for edge deployment
+Threshold is empirically calibrated (≈ 0.50–0.52) to balance:
 
-Learning Outcomes
+- False Acceptance Rate (FAR)  
+- False Rejection Rate (FRR)
 
-Through this project, I gained hands-on experience in:
+---
 
-Speaker embedding extraction
+## 🛠 Engineering Highlights
 
-Deep learning for speech applications
+- GPU-aware inference  
+- Deterministic preprocessing  
+- Defensive amplitude normalization  
+- Signal energy validation  
+- Multi-sample enrollment strategy  
+- Modular and extensible architecture  
 
-Real-time inference system design
+---
 
-Audio preprocessing pipelines
+## 🔮 Future Improvements
 
-Model integration and deployment workflows
+- Equal Error Rate (EER) evaluation  
+- ROC curve visualization  
+- Multi-speaker database support  
+- REST API deployment  
+- Streaming real-time inference  
+- Voice Activity Detection (VAD)  
+- Adaptive thresholding  
 
-Author
+---
 
-Pavan Ghorpade
-Machine Learning & AI Enthusiast
+## 📌 Use Cases
 
-This project represents a practical implementation of modern speaker recognition systems using state-of-the-art deep learning architectures.
+- Biometric authentication  
+- Secure voice access systems  
+- Personalized voice assistants  
+- Voice-controlled applications  
+- Speaker verification research  
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 👨‍💻 Author
+
+**Pavan Ghorpade**  
+Machine Learning Engineer | Speech & Audio Processing  
+
+---
