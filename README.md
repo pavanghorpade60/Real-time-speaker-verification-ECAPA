@@ -1,4 +1,4 @@
-# 🎙️ Real-Time Speaker Verification using ECAPA-TDNN
+#  Real-Time Speaker Verification using ECAPA-TDNN
 
 A real-time biometric speaker verification system built using a pretrained **ECAPA-TDNN** model and cosine similarity scoring.
 
@@ -6,7 +6,7 @@ The system performs structured speaker enrollment, extracts 192-dimensional spea
 
 ---
 
-## 🚀 Project Overview
+##  Project Overview
 
 This project implements a complete speaker verification pipeline:
 
@@ -22,9 +22,9 @@ The system is modular, scalable, and designed following production-oriented ML e
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
-### 🔁 End-to-End Pipeline
+###  End-to-End Pipeline
 
 ```
 Raw Audio / Microphone
@@ -44,7 +44,7 @@ Speaker: Pavan / Unknown
 
 ---
 
-## 🧠 Model Details
+##  Model Details
 
 - Architecture: ECAPA-TDNN  
 - Pretrained on: VoxCeleb dataset  
@@ -55,7 +55,7 @@ Speaker: Pavan / Unknown
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 Real-time-speaker-verification-ECAPA/
@@ -126,7 +126,7 @@ This:
 
 ---
 
-## 🔐 Real-Time Verification
+##  Real-Time Verification
 
 ### Single Sample Mode
 
@@ -163,7 +163,7 @@ Multi-trial averaging reduces embedding variance and improves robustness.
 
 ---
 
-## 📊 Similarity Interpretation
+##  Similarity Interpretation
 
 Cosine similarity range:
 
@@ -188,7 +188,7 @@ Threshold is empirically calibrated (≈ 0.50–0.52) to balance:
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 - Equal Error Rate (EER) evaluation  
 - ROC curve visualization  
@@ -200,7 +200,7 @@ Threshold is empirically calibrated (≈ 0.50–0.52) to balance:
 
 ---
 
-## 📌 Use Cases
+##  Use Cases
 
 - Biometric authentication  
 - Secure voice access systems  
@@ -216,7 +216,7 @@ MIT License
 
 ---
 
-## 👨‍💻 Author
+##  Author
 
 **Pavan Ghorpade**  
 Machine Learning Engineer | Speech & Audio Processing  
