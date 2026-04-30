@@ -2,7 +2,7 @@ import os
 from pydub import AudioSegment
 from pydub.utils import which
 
-# 🔥 Force pydub to use ffmpeg
+#  Force pydub to use ffmpeg
 AudioSegment.converter = which("ffmpeg")
 
 INPUT_FOLDER = "data/pavan/raw_audio"

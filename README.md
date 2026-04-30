@@ -1,224 +1,326 @@
-#  Real-Time Speaker Verification using ECAPA-TDNN
+# Real-Time Speaker Verification System using ECAPA-TDNN
 
-A real-time biometric speaker verification system built using a pretrained **ECAPA-TDNN** model and cosine similarity scoring.
+A **real-time biometric speaker verification system** built using the pretrained **ECAPA-TDNN deep learning model** from SpeechBrain.
 
-The system performs structured speaker enrollment, extracts 192-dimensional speaker embeddings, and verifies identity using threshold-based comparison. Multi-trial averaging is implemented to improve robustness and reduce embedding variance.
+The system records live microphone audio, extracts **speaker embeddings**, compares them with enrolled voice samples, and verifies identity using **cosine similarity scoring**.
 
----
-
-##  Project Overview
-
-This project implements a complete speaker verification pipeline:
-
-- 🎤 Structured voice sample collection  
-- 🔄 Audio preprocessing & standardization  
-- 🧠 Speaker embedding extraction (ECAPA-TDNN)  
-- 💾 Enrollment embedding storage  
-- 📊 Cosine similarity scoring  
-- 🔐 Threshold-based identity verification  
-- 📈 Multi-trial stabilization for improved accuracy  
-
-The system is modular, scalable, and designed following production-oriented ML engineering practices.
+In addition, the system performs **speech transcription, acoustic feature analysis, and automatic logging of results into Excel**, making it useful for both **demonstration and evaluation purposes**.
 
 ---
 
-##  System Architecture
+# Project Overview
 
-###  End-to-End Pipeline
+This project implements a complete **end-to-end speaker verification pipeline**.
+
+Main capabilities:
+
+*  Real-time microphone audio capture
+*  Speaker embedding extraction using ECAPA-TDNN
+*  Cosine similarity comparison against enrolled samples
+*  Threshold-based identity verification
+*  Speech transcription using OpenAI Whisper
+*  Voice feature analysis (Pitch, Spectral Centroid, Bandwidth, Energy, MFCC)
+*  Automatic logging of verification results to Excel
+*  Playback links for both input and matched audio samples
+
+The system is designed following **machine learning engineering best practices** with modular components and reproducible results.
+
+---
+
+# System Architecture
+
+### End-to-End Pipeline
 
 ```
-Raw Audio / Microphone
-        ↓
-Audio Standardization (16kHz, Mono)
-        ↓
-ECAPA-TDNN Embedding Extraction
-        ↓
-L2 Normalization
-        ↓
+Microphone Input
+      ↓
+Voice Activity Detection
+      ↓
+Audio Normalization
+      ↓
+ECAPA-TDNN Speaker Embedding Extraction
+      ↓
+Embedding Normalization
+      ↓
 Cosine Similarity Comparison
-        ↓
+      ↓
 Threshold Decision
-        ↓
-Speaker: Pavan / Unknown
+      ↓
+Speaker Identified (Pavan / Unknown)
+      ↓
+Speech Transcription + Feature Analysis
+      ↓
+Results Logged to Excel
 ```
 
 ---
 
-##  Model Details
+# Model Details
 
-- Architecture: ECAPA-TDNN  
-- Pretrained on: VoxCeleb dataset  
-- Embedding Dimension: 192  
-- Similarity Metric: Cosine Similarity  
-- Decision Strategy: Threshold-based classification  
-- Optional Stabilization: Multi-trial embedding averaging  
+Model: **ECAPA-TDNN**
+
+Pretrained on: **VoxCeleb Dataset**
+
+Key Properties:
+
+| Property             | Value             |
+| -------------------- | ----------------- |
+| Embedding Dimension  | 192               |
+| Similarity Metric    | Cosine Similarity |
+| Speaker Verification | Threshold Based   |
+| Inference Device     | CPU / GPU         |
+| Speech Recognition   | Whisper Medium    |
 
 ---
 
-##  Project Structure
+# Project Structure
 
 ```
-Real-time-speaker-verification-ECAPA/
+Real-Time Speaker Identification using ECAPA-TDNN
 │
-├── model.py                # Custom ECAPA-style embedding model
-├── utils.py                # Preprocessing & similarity utilities
-├── build_voiceprint.py     # Enrollment pipeline
-├── record_samples.py       # Structured audio recording
-├── convert_audio.py        # Audio format standardization
-├── test.py                 # Single-sample real-time verification
-├── test2.py                # Multi-trial stabilized verification
-├── requirements.txt        # Dependencies
-├── .gitignore              # Ignore unnecessary files
-└── README.md               # Project documentation
+├── data/
+│   └── pavan/
+│       └── processed_audio/        # Enrolled speaker samples
+│
+├── recordings/                     # Live microphone recordings
+│
+├── logs/
+│   └── speaker_verification_log.xlsx   # Automatic result logs
+│
+├── pretrained_models/              # SpeechBrain downloaded models
+│
+├── test.py                         # Main real-time verification system
+├── enroll_150.py                   # Enrollment embedding generation
+├── record_samples.py               # Audio recording script
+├── convert_audio.py                # Audio preprocessing utility
+├── model.py                        # Model related utilities
+│
+├── pavan_master_embedding.pt       # Final enrolled speaker embedding
+├── requirements.txt                # Python dependencies
+├── README.md                       # Project documentation
+├── LICENSE
+└── .gitignore
 ```
 
 ---
 
-## ⚙️ Installation
+# Installation
 
-### 1️⃣ Clone Repository
+### 1. Clone the Repository
 
-```bash
+```
 git clone https://github.com/pavanghorpade60/Real-time-speaker-verification-ECAPA.git
 cd Real-time-speaker-verification-ECAPA
 ```
 
-### 2️⃣ Install Dependencies
+---
 
-```bash
+### 2. Install Dependencies
+
+```
 pip install -r requirements.txt
 ```
 
+Main libraries used:
+
+* PyTorch
+* SpeechBrain
+* Transformers
+* Whisper
+* Librosa
+* SoundDevice
+* Pandas
+* OpenPyXL
+
 ---
 
-## 🎤 Enrollment Process
+# Enrollment Process
 
-### Step 1 – Record Samples
+### Step 1 — Record Voice Samples
 
-```bash
+```
 python record_samples.py
 ```
 
-This records multiple 16kHz mono samples for enrollment.
+This records multiple voice samples for enrollment.
 
 ---
 
-### Step 2 – Convert Audio (If Required)
+### Step 2 — Convert Audio Format
 
-```bash
+```
 python convert_audio.py
 ```
 
-Standardizes audio to 16kHz mono WAV format.
+Standardizes audio into:
+
+* 16kHz sample rate
+* Mono channel
+* WAV format
 
 ---
 
-### Step 3 – Build Enrollment Embeddings
+### Step 3 — Generate Speaker Embeddings
 
-```bash
-python build_voiceprint.py
+```
+python enroll_150.py
 ```
 
-This:
-- Extracts embeddings using ECAPA-TDNN
-- Normalizes embeddings
-- Saves them as `pavan_embeddings.pt`
+This script:
+
+* Extracts ECAPA embeddings
+* Normalizes embeddings
+* Saves them as
+
+```
+pavan_master_embedding.pt
+```
 
 ---
 
-##  Real-Time Verification
+# Real-Time Speaker Verification
 
-### Single Sample Mode
+Run the system:
 
-```bash
+```
 python test.py
 ```
 
-Example Output:
+The system will:
+
+1. Listen to microphone input
+2. Detect speech
+3. Extract speaker embedding
+4. Compare with enrolled samples
+5. Transcribe speech
+6. Analyze voice features
+7. Log results to Excel
+
+---
+
+# Example Console Output
 
 ```
-🔎 Audio Energy: 0.0832
-📊 Average Similarity: 0.7814
-📊 Max Similarity:     0.8429
-🗣️ Speaker: Pavan
+SMART VERIFICATION RESULT
+
+Spoken Text           : Can you hear what I am saying?
+Detected Speaker      : PAVAN
+
+Best Matching Sample  : pavan_06.wav
+Best Similarity Score : 0.5549
+Average Similarity    : 0.4550
+
+VOICE FEATURE ANALYSIS
+
+Pitch Difference      : 22.01
+Spectral Centroid Diff: 364.28
+Bandwidth Difference  : 143.63
+Energy Difference     : 0.0577
+MFCC Distance         : 212.66
 ```
 
 ---
 
-### Multi-Trial Stabilized Mode
+# Excel Logging System
 
-```bash
-python test2.py
-```
-
-Example Output:
+Each verification run is automatically logged in:
 
 ```
-📊 Average Similarity: 0.8035
-📊 Max Similarity:     0.8712
-🗣️ Speaker: Pavan
+logs/speaker_verification_log.xlsx
 ```
 
-Multi-trial averaging reduces embedding variance and improves robustness.
+The Excel sheet contains:
+
+| Column               | Description                      |
+| -------------------- | -------------------------------- |
+| Timestamp            | Time of verification             |
+| Spoken Text          | Whisper transcription            |
+| Detected Speaker     | Predicted identity               |
+| Input Audio          | Recorded microphone audio        |
+| Matched Audio        | Closest matching enrolled sample |
+| Best Similarity      | Highest cosine similarity        |
+| Average Similarity   | Mean similarity across samples   |
+| Pitch Difference     | Pitch comparison                 |
+| Spectral Centroid    | Voice brightness difference      |
+| Bandwidth Difference | Frequency spread difference      |
+| Energy Difference    | Loudness difference              |
+| MFCC Distance        | Spectral feature difference      |
+
+Both **input audio and matched audio are clickable** inside the Excel file.
 
 ---
 
-##  Similarity Interpretation
+# Similarity Score Interpretation
 
-Cosine similarity range:
+Typical cosine similarity ranges:
 
-- Same Speaker → ~0.65 to 0.90  
-- Different Speaker → ~0.20 to 0.50  
+| Similarity Score | Meaning           |
+| ---------------- | ----------------- |
+| 0.65 – 0.90      | Same Speaker      |
+| 0.45 – 0.65      | Possible Match    |
+| 0.20 – 0.45      | Different Speaker |
 
-Threshold is empirically calibrated (≈ 0.50–0.52) to balance:
+Threshold used in this system:
 
-- False Acceptance Rate (FAR)  
-- False Rejection Rate (FRR)
-
----
-
-## 🛠 Engineering Highlights
-
-- GPU-aware inference  
-- Deterministic preprocessing  
-- Defensive amplitude normalization  
-- Signal energy validation  
-- Multi-sample enrollment strategy  
-- Modular and extensible architecture  
+```
+0.50
+```
 
 ---
 
-##  Future Improvements
+# Engineering Highlights
 
-- Equal Error Rate (EER) evaluation  
-- ROC curve visualization  
-- Multi-speaker database support  
-- REST API deployment  
-- Streaming real-time inference  
-- Voice Activity Detection (VAD)  
-- Adaptive thresholding  
+Key engineering practices used in this project:
 
----
-
-##  Use Cases
-
-- Biometric authentication  
-- Secure voice access systems  
-- Personalized voice assistants  
-- Voice-controlled applications  
-- Speaker verification research  
+* Real-time microphone streaming
+* Voice activity detection
+* Audio normalization
+* Pretrained ECAPA deep speaker embeddings
+* Cosine similarity verification
+* Feature analysis for interpretability
+* Excel-based logging system
+* Modular Python pipeline
+* GPU-aware inference support
 
 ---
 
-## 📄 License
+# Future Improvements
+
+Potential upgrades for this system:
+
+* Multi-speaker enrollment database
+* Equal Error Rate (EER) evaluation
+* ROC curve visualization
+* Web API deployment
+* Real-time streaming inference
+* Adaptive threshold learning
+* Speaker diarization support
+* Noise robustness improvements
+
+---
+
+# Applications
+
+This system can be used for:
+
+* Biometric authentication
+* Secure voice access systems
+* Personalized voice assistants
+* Voice-controlled automation
+* Speaker verification research
+* Audio forensics
+
+---
+
+# License
 
 MIT License
 
 ---
 
-##  Author
+# Author
 
-**Pavan Ghorpade**  
-Machine Learning Engineer | Speech & Audio Processing  
+**Pavan Ghorpade**
 
----
+Machine Learning Engineer
+Speech Processing & AI Systems
